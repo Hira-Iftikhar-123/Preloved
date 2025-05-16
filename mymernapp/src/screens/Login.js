@@ -10,7 +10,6 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submitting form with:', credentials);
 
     try {
       const response = await fetch("http://localhost:4000/api/loginuser", {
@@ -25,7 +24,6 @@ export default function Login() {
       });
 
       const json = await response.json();
-      console.log('Full API response:', json);
 
       if (json.success) {
         localStorage.setItem('userEmail', credentials.email);
