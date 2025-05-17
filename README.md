@@ -4,7 +4,7 @@ Preloved is a sustainable fashion platform that allows users to browse, buy, and
 
 ## Tech Stack
 
-This project is built using the **MERN** stack, which includes:
+This project is built using the MERN stack, which includes:
 
 - **MongoDB**: NoSQL database used to store clothing items, categories, and user data.
 - **Express**: Backend framework that handles API requests and server-side logic.
@@ -66,3 +66,10 @@ This project is built using the **MERN** stack, which includes:
 ### Category Selection & Sorting
 - Users can filter clothing items by category.
 - Products are also sorted by price (Low to High, High to Low).
+
+### Recommendations
+Personalized product suggestions based on user preferences and behavior.
+
+- **Content-Based Filtering**: Analyzes the user's previous orders to recommend items based on preferred categories, brands, and price range.
+- **Collaborative Filtering**: Identifies users with similar purchase histories and recommends items they have bought but the current user has not.
+- Recommendations are stored and updated in the database for faster access and improved accuracy.
