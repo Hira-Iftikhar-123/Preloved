@@ -4,22 +4,20 @@ import { useCart, useDispatchCart } from './ContextReducer';
 export default function Card({ clothItem, imageSrc }) {
 
   const [qty, setQty] = useState(1);
-  const [size, setSize] = useState(Object.keys(clothItem.sizes)[0]); // Default to the first size
-  const [finalPrice, setFinalPrice] = useState(0); // Store the final price dynamically
+  const [size, setSize] = useState(Object.keys(clothItem.sizes)[0]);
+  const [finalPrice, setFinalPrice] = useState(0);
   let priceOptions = Object.keys(clothItem.sizes);
   let dispatch = useDispatchCart();
   let data = useCart();
   const priceRef = useRef();
 
-  // Recalculate the final price whenever qty or size changes
   useEffect(() => {
-    setFinalPrice(qty * parseInt(clothItem.sizes[size])); // Calculate price based on qty and selected size
-  }, [qty, size, clothItem.sizes]); // This effect depends on qty, size, and the clothItem.sizes object
+    setFinalPrice(qty * parseInt(clothItem.sizes[size])); 
+  }, [qty, size, clothItem.sizes]);
 
   const handleAddToCart = async () => {
     let cloth = [];
 
-    // Check if the item is already in the cart
     for (const item of data) {
       if (item.id === clothItem._id) {
         cloth = item;
@@ -28,13 +26,11 @@ export default function Card({ clothItem, imageSrc }) {
     }
 
     if (cloth.length !== 0) {
-      // If the item is in the cart, update the existing item
       if (cloth.size === size) {
         await dispatch({ type: "UPDATE", id: clothItem._id, price: finalPrice, qty: qty });
         return;
       }
     } else if (cloth.length === 0) {
-      // If the item is not in the cart, add it
       await dispatch({ type: "ADD", id: clothItem._id, name: clothItem.brand, qty, size, price: finalPrice, img: imageSrc });
     }
   };
@@ -48,11 +44,6 @@ export default function Card({ clothItem, imageSrc }) {
           className="card-img-top"
           style={{ height: '300px', objectFit: 'cover' }}
         />
-        <div className="position-absolute top-0 end-0 p-2">
-          <button className="btn wishlist-btn rounded-circle">
-            <i className="bi bi-heart text-dark"></i>
-          </button>
-        </div>
       </div>
       <div className="card-body">
         <h5 className="card-title fw-bold mb-3">{clothItem.brand || 'Maria B Clothing'}</h5>

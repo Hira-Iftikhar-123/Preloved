@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
-const mongoURL = 'mongodb+srv://preloved:12345@cluster0.zulxw.mongodb.net/preloved_mern?retryWrites=true&w=majority&appName=Cluster0';
+require('dotenv').config();
+const mongoURL = process.env.MONGO_URI
 
 const mongoDB = async () => {
     try {

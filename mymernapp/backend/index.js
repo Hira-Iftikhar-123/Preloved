@@ -1,6 +1,7 @@
 const express = require('express')
+require('dotenv').config();
 const app = express()
-const port = 4000
+const port = process.env.port;
 const mongoDB = require('./db')
 
 mongoDB();
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use('/api',require("./routes/CreateUser"));
 app.use('/api',require('./routes/DisplayData'));
 app.use('/api',require('./routes/OrderData'));
+app.use('/api',require('./routes/RecommendationData'));
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost: ${port}`)
