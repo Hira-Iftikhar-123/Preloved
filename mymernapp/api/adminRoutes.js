@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const adminAuth = require('../middleware/adminAuth');
-const Dress = require('../models/Dress');
-const User = require('../models/User');
+const adminAuth = require('./middleware/adminAuth');
+const Dress = require('./models/Dress');
+const User = require('./models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
-const SupportTicket = require('../models/SupportTicket');
+const SupportTicket = require('./models/SupportTicket');
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;

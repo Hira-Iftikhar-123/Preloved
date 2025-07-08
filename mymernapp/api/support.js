@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const SupportTicket = require('../models/SupportTicket');
-const ChatMessage = require('../models/ChatMessage');
-const authMiddleware = require('../middleware/auth');
+const SupportTicket = require('./models/SupportTicket');
+const ChatMessage = require('./models/ChatMessage');
+const authMiddleware = require('./middleware/auth');
 
 router.post('/tickets', authMiddleware, async (req, res) => {
     try {
