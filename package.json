@@ -1,5 +1,11 @@
 {
   "dependencies": {
-    "sharp": "^0.33.5"
+    "pure-react-carousel": "^1.32.0",
+    "react-slick": "^0.30.3",
+    "sharp": "^0.33.5",
+    "slick-carousel": "^1.8.1"
+  },
+  "scripts": {
+    "build": "react-scripts build"
   }
 }

@@ -39,7 +39,6 @@ router.post("/createuser",
 router.post("/loginuser", 
     body('email', "Enter a Valid Email").isEmail(),
     body('password', "Password cannot be blank").isLength({min : 5}), async (req, res) => {
-    console.log('Login attempt:', req.body.email); 
     let success = false
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -54,25 +53,18 @@ router.post("/loginuser",
             console.log('User not found:', email); 
             return res.status(400).json({ success, error: "Try Logging in with correct credentials" });
         }
-        console.log('Input password:', req.body.password);
-        console.log('Stored hash:', userData.password);
+        if (userData.isAdmin) {
+            return res.status(403).json({ error: "Please use the admin login page to log in as admin." });
+        }
         const pwdCompare = await bcrypt.compare(req.body.password, userData.password);
-        console.log('Comparison result:', pwdCompare);
-        console.log('Password compare result:', pwdCompare); 
         if (!pwdCompare) {
-            console.log('Password mismatch for:', email); 
             return res.status(400).json({ success, error: "Try Logging in with correct credentials" });
         }
         
-        const data = {
-            user: {
-                id: userData.id
-            }
-        }
+        const data = { id: userData.id }
         success = true;
         const authToken = jwt.sign(data, jwtSecret);
-        console.log('Login successful, token generated for:', email); 
-        res.json({ success, authToken: authToken })
+        res.json({ success, authToken: authToken, email: userData.email})
     } catch (error) {
         console.error('Login error:', error.message)
         res.send("Server Error")

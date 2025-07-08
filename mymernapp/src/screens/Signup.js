@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import '../components/Auth.css';
 
 export default function Signup() {
     const [credentials, setcredentials] = useState({ name: "", email: "", password: "", geolocation: "" });
     const [successMessage, setSuccessMessage] = useState("");
     const navigate = useNavigate();
+    const logo = process.env.PUBLIC_URL + '/download.jpeg';
+
+    useEffect(() => {
+        document.body.classList.add('auth-bg');
+        return () => document.body.classList.remove('auth-bg');
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -48,82 +55,74 @@ export default function Signup() {
         <>
             <Header />
             <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: 'calc(100vh - 200px)', marginTop: '100px' }}>
-                <div className="card shadow-lg" style={{ width: '100%', maxWidth: '500px', background: '#2c2c2c', border: 'none' }}>
+                <div className="auth-card card shadow-lg w-100" style={{ maxWidth: '500px' }}>
                     <div className="card-body p-5">
-                        <h2 className="text-center mb-4" style={{ color: '#ffffff' }}>Create Account</h2>
-                        <p className="text-center text-muted mb-4">Be a part of our community</p>
-
+                        <div className="auth-logo">
+                            <img src={logo} alt="Logo" />
+                        </div>
+                        <h2 className="auth-title mb-2">Create Account</h2>
+                        <p className="auth-subtitle mb-4">Be a part of our community</p>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
-                                <label htmlFor="name" className="form-label" style={{ color: '#ffffff' }}>Full Name</label>
+                                <label htmlFor="name" className="form-label" style={{ color: '#34495e' }}>Full Name</label>
                                 <input 
                                     type="text" 
-                                    className="form-control bg-dark text-light border-0" 
+                                    className="form-control auth-input" 
                                     name="name" 
                                     value={credentials.name} 
                                     onChange={onChange}
-                                    style={{ padding: '12px' }}
                                 />
                             </div>
-
                             <div className="mb-4">
-                                <label htmlFor="exampleInputEmail1" className="form-label" style={{ color: '#ffffff' }}>Email address</label>
+                                <label htmlFor="exampleInputEmail1" className="form-label" style={{ color: '#34495e' }}>Email address</label>
                                 <input 
                                     type="email" 
-                                    className="form-control bg-dark text-light border-0" 
+                                    className="form-control auth-input" 
                                     name="email" 
                                     value={credentials.email} 
                                     onChange={onChange} 
                                     id="exampleInputEmail1" 
                                     aria-describedby="emailHelp"
-                                    style={{ padding: '12px' }}
                                 />
                                 <div id="emailHelp" className="form-text">Format: xyz@example.com</div>
                             </div>
-
                             <div className="mb-4">
-                                <label htmlFor="exampleInputPassword1" className="form-label" style={{ color: '#ffffff' }}>Password</label>
+                                <label htmlFor="exampleInputPassword1" className="form-label" style={{ color: '#34495e' }}>Password</label>
                                 <input 
                                     type="password" 
-                                    className="form-control bg-dark text-light border-0" 
+                                    className="form-control auth-input" 
                                     name="password" 
                                     value={credentials.password} 
                                     onChange={onChange} 
                                     id="exampleInputPassword1"
-                                    style={{ padding: '12px' }}
                                 />
                                 <div className="form-text">Password must be at least 8 characters long</div>
                             </div>
-
                             <div className="mb-4">
-                                <label htmlFor="exampleInputGeolocation" className="form-label" style={{ color: '#ffffff' }}>Address</label>
+                                <label htmlFor="exampleInputGeolocation" className="form-label" style={{ color: '#34495e' }}>Address</label>
                                 <input 
                                     type="text" 
-                                    className="form-control bg-dark text-light border-0" 
+                                    className="form-control auth-input" 
                                     name="geolocation" 
                                     value={credentials.geolocation} 
                                     onChange={onChange} 
                                     id="exampleInputGeolocation"
-                                    style={{ padding: '12px' }}
                                 />
                             </div>
-
                             <div className="d-grid gap-2">
-                                <button type="submit" className="btn btn-primary btn-lg" style={{ padding: '12px', backgroundColor: '#34495e', border: 'none' }}>
+                                <button type="submit" className="auth-btn btn btn-primary btn-lg">
                                     Create Account
                                 </button>
                             </div>
                         </form>
-
                         {successMessage && (
-                            <div className="alert alert-success mt-4 text-center" role="alert">
+                            <div className="auth-alert alert alert-success mt-4 text-center" role="alert">
                                 {successMessage}
                             </div>
                         )}
-
                         <div className="text-center mt-4">
                             <p className="text-muted">Already have an account?</p>
-                            <Link to="/login" className="btn btn-outline-light rounded-pill px-4">
+                            <Link to="/login" className="auth-link btn btn-outline-primary rounded-pill px-4">
                                 Login
                             </Link>
                         </div>

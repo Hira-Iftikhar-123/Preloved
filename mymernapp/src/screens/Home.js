@@ -3,6 +3,10 @@ import Header from '../components/Header';
 import Card from '../components/Card';
 import Footer from '../components/Footer';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 export default function Home() {
   const [categories, setclothcat] = useState([]);
@@ -11,6 +15,7 @@ export default function Home() {
   const [sortOrder, setSortOrder] = useState("");
   const location = useLocation();
   const selectedCategory = location.state?.selectedCategory || null;
+  const [dresses, setDresses] = useState([]);
 
   const loadData = async () => {
     try {
@@ -32,7 +37,24 @@ export default function Home() {
 
   useEffect(() => {
     loadData();
+    // Fetch all dresses for users
+    axios.get('/api/dresses')
+      .then(res => setDresses(res.data))
+      .catch(err => console.error(err));
   }, []);
+
+  const sliderSettings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    responsive: [
+      { breakpoint: 1200, settings: { slidesToShow: 3 } },
+      { breakpoint: 992, settings: { slidesToShow: 2 } },
+      { breakpoint: 600, settings: { slidesToShow: 1 } }
+    ]
+  };
 
   return (
     <div>
@@ -139,8 +161,7 @@ export default function Home() {
     id="sortPrice"
     className="form-select w-auto"
     value={sortOrder}
-    onChange={e => setSortOrder(e.target.value)}
-  >
+    onChange={e => setSortOrder(e.target.value)}>
     <option value="">Default</option>
     <option value="lowToHigh">Low to High</option>
     <option value="highToLow">High to Low</option>
@@ -160,38 +181,54 @@ export default function Home() {
                 <hr />
 
                 <div className="row g-4">
-                  {items.length > 0 ? (
-                    (() => {
-                      let filteredItems = items
-                        .filter(item => item.categoryname?.trim().toLocaleLowerCase() === category.CategoryName?.trim().toLocaleLowerCase() && (item.brand.toLowerCase().includes(String(search).toLocaleLowerCase())));
+                  {(() => {
+                    // Filter items from ClothingData for this category
+                    let filteredItems = items.filter(item => item.categoryname?.trim().toLocaleLowerCase() === category.CategoryName?.trim().toLocaleLowerCase() && (item.brand.toLowerCase().includes(String(search).toLocaleLowerCase())));
+                    // Filter dresses from admin for this category
+                    let filteredDresses = dresses.filter(dress => dress.category?.trim().toLocaleLowerCase() === category.CategoryName?.trim().toLocaleLowerCase() && (dress.brand.toLowerCase().includes(String(search).toLocaleLowerCase())));
+                    // Merge both arrays
+                    let allItems = [
+                      ...filteredItems.map(item => ({ ...item, _isDress: false })),
+                      ...filteredDresses.map(dress => ({ ...dress, _isDress: true }))
+                    ];
 
-                      if (sortOrder === "lowToHigh") {
-                        filteredItems.sort((a, b) => {
-                          const aPrice = Math.min(...Object.values(a.sizes).map(Number));
-                          const bPrice = Math.min(...Object.values(b.sizes).map(Number));
-                          return aPrice - bPrice;
-                        });
-                      } else if (sortOrder === "highToLow") {
-                        filteredItems.sort((a, b) => {
-                          const aPrice = Math.min(...Object.values(a.sizes).map(Number));
-                          const bPrice = Math.min(...Object.values(b.sizes).map(Number));
-                          return bPrice - aPrice;
-                        });
-                      }
+                    if (sortOrder === "lowToHigh") {
+                      allItems.sort((a, b) => {
+                        const aPrice = Math.min(...Object.values(a.sizes).map(Number));
+                        const bPrice = Math.min(...Object.values(b.sizes).map(Number));
+                        return aPrice - bPrice;
+                      });
+                    } else if (sortOrder === "highToLow") {
+                      allItems.sort((a, b) => {
+                        const aPrice = Math.min(...Object.values(a.sizes).map(Number));
+                        const bPrice = Math.min(...Object.values(b.sizes).map(Number));
+                        return bPrice - aPrice;
+                      });
+                    }
 
-                      return filteredItems.map(filteredItem => (
-                        <div className='col-12 col-md-6 col-lg-3' key={filteredItem._id}>
-                          <Card
-                            clothItem={filteredItem}
-                            options={filteredItem.sizes[0]}
-                            imageSrc={filteredItem.img}
-                          />
-                        </div>
-                      ));
-                    })()
-                  ) : (
-                    <div>No Items Found</div>
-                  )}
+                    return allItems.length > 0 ? (
+                      <div style={{ margin: '0 -8px' }}>
+                        <Slider {...sliderSettings}>
+                          {allItems.map(item => (
+                            <div key={item._id} style={{ padding: '0 8px', height: '100%' }}>
+                              <Card
+                                clothItem={item}
+                                imageSrc={
+                                  item._isDress
+                                    ? (item.images && item.images.length > 0
+                                        ? (item.images[0].startsWith('/uploads')
+                                            ? item.images[0]
+                                            : '/uploads/dresses/' + item.images[0])
+                                        : null)
+                                    : item.img
+                                }
+                              />
+                            </div>
+                          ))}
+                        </Slider>
+                      </div>
+                    ) : <div>No Items Found</div>;
+                  })()}
                 </div>
               </div>
             ))
@@ -199,7 +236,6 @@ export default function Home() {
           <div className='text-center py-5'>Loading Categories!</div>
         )}
       </div>
-
       <Footer />
     </div>
   );

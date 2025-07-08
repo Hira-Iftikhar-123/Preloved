@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Order = require('../models/Orders')
 const Recommendation = require('../models/Recommendation')
+const Dress = require('../models/Dress');
 
 router.post('/generateRecommendations', async (req, res) => {
     try {
@@ -12,7 +13,7 @@ router.post('/generateRecommendations', async (req, res) => {
             return res.json({ recommendations: [] });
         }
 
-        const allItems = global.clothing_items;
+        const allItems = await Dress.find();
 
         const preferences = {
             categories: new Set(),
@@ -46,7 +47,7 @@ router.post('/generateRecommendations', async (req, res) => {
                     orderGroup.some(orderItem => orderItem.id === item._id.toString())
                 );
                 if (hasPurchased) return false;
-                const matchesCategory = preferences.categories.includes(item.categoryname);
+                const matchesCategory = preferences.categories.includes(item.category);
                 const matchesBrand = preferences.brands.includes(item.brand);
                 const price = Math.min(...Object.values(item.sizes).map(Number));
                 const matchesPriceRange = price >= preferences.priceRange.min * 0.7 && 
@@ -57,7 +58,7 @@ router.post('/generateRecommendations', async (req, res) => {
             .map(item => ({
                 productId: item._id,
                 score: calculateScore(item, preferences),
-                category: item.categoryname,
+                category: item.category,
                 lastUpdated: new Date()
             }))
             .sort((a, b) => b.score - a.score)
@@ -92,12 +93,13 @@ router.post('/getRecommendations', async (req, res) => {
             return res.json({ recommendations: [] });
         }
 
+        const allItems = await Dress.find();
         const recommendedProducts = recommendation.recommendations
             .map(rec => {
-                const product = global.clothing_items.find(item => 
+                const product = allItems.find(item => 
                     item._id.toString() === rec.productId
                 );
-                return product ? { ...product, recommendationScore: rec.score } : null;
+                return product ? { ...product.toObject(), recommendationScore: rec.score } : null;
             })
             .filter(Boolean);
 
@@ -111,7 +113,7 @@ router.post('/getRecommendations', async (req, res) => {
 function calculateScore(item, preferences) {
     let score = 0;
     
-    if (preferences.categories.includes(item.categoryname)) {
+    if (preferences.categories.includes(item.category)) {
         score += 3;
     }
     

@@ -9,7 +9,7 @@ export default function MyOrder() {
     const [loading, setLoading] = useState(true);
 
     const fetchMyOrder = async () => {
-        await fetch('http://localhost:4000/api/myorderData',{
+        await fetch('http://localhost:4000/api/myorderData', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -68,14 +68,15 @@ export default function MyOrder() {
             </div>
 
             <div className='container' style={{ minHeight: '100vh', padding: '32px 0', marginTop: '100px' }}>
-                <div className="d-flex align-items-center mb-4" style={{marginBottom: '2rem'}}>
+                <div className="d-flex align-items-center mb-4" style={{ marginBottom: '2rem' }}>
                     <h2
                         className="fw-bold"
                         style={{
                             color: '#ffffff',
                             fontSize: '2.5rem',
                             letterSpacing: '1px',
-                            marginBottom: 0, position: 'relative', zIndex: 1 }}>
+                            marginBottom: 0, position: 'relative', zIndex: 1
+                        }}>
                         My Orders
                     </h2>
                 </div>
@@ -113,28 +114,33 @@ export default function MyOrder() {
                         {/* Recommendations Section */}
                         {recommendations.length > 0 && (
                             <div className='mt-5'>
-                                <div className="d-flex align-items-center mb-4" style={{marginBottom: '2rem'}}>
+                                <div className="d-flex align-items-center mb-4" style={{ marginBottom: '2rem' }}>
                                     <h2
                                         className="fw-bold"
                                         style={{
                                             color: '#ffffff',
                                             fontSize: '2.5rem',
                                             letterSpacing: '1px',
-                                            marginBottom: 0, position: 'relative', zIndex: 1 }}>
+                                            marginBottom: 0, position: 'relative', zIndex: 1
+                                        }}>
                                         Recommended for You
                                     </h2>
                                 </div>
                                 <div className='row g-4'>
                                     {recommendations.map((item) => (
                                         <div className='col-12 col-sm-6 col-md-4 col-lg-3' key={item._id}>
-                                            <OrderCard 
+                                            <OrderCard
                                                 item={{
                                                     name: item.brand,
-                                                    img: item.img,
+                                                    img: item.images && item.images.length > 0
+                                                        ? (item.images[0].startsWith('/uploads')
+                                                            ? 'http://localhost:4000' + item.images[0]
+                                                            : 'http://localhost:4000/uploads/dresses/' + item.images[0])
+                                                        : undefined,
                                                     price: Math.min(...Object.values(item.sizes).map(Number)),
                                                     qty: 1,
                                                     size: Object.keys(item.sizes)[0]
-                                                }} 
+                                                }}
                                             />
                                         </div>
                                     ))}

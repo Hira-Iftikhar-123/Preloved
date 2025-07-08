@@ -1,5 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useCart, useDispatchCart } from './ContextReducer';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import './Card.css'; // For custom arrow styles
 
 export default function Card({ clothItem, imageSrc }) {
 
@@ -10,6 +14,11 @@ export default function Card({ clothItem, imageSrc }) {
   let dispatch = useDispatchCart();
   let data = useCart();
   const priceRef = useRef();
+
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
+  let images = clothItem.images && clothItem.images.length > 0
+    ? clothItem.images.map(img => img.startsWith('/uploads') ? backendUrl + img : backendUrl + '/uploads/dresses/' + img)
+    : [imageSrc || 'https://via.placeholder.com/300x180?text=No+Image'];
 
   useEffect(() => {
     setFinalPrice(qty * parseInt(clothItem.sizes[size])); 
@@ -31,19 +40,61 @@ export default function Card({ clothItem, imageSrc }) {
         return;
       }
     } else if (cloth.length === 0) {
-      await dispatch({ type: "ADD", id: clothItem._id, name: clothItem.brand, qty, size, price: finalPrice, img: imageSrc });
+      await dispatch({ type: "ADD", id: clothItem._id, name: clothItem.brand, qty, size, price: finalPrice, img: images[0] });
     }
+  };
+
+  // Custom arrow components
+  const Arrow = (props) => {
+    const { className, style, onClick, arrowType } = props;
+    return (
+      <div
+        className={`custom-arrow ${arrowType} ${className}`}
+        style={{ ...style, display: 'block' }}
+        onClick={onClick}
+      >
+        {arrowType === 'next' ? '›' : '‹'}
+      </div>
+    );
+  };
+
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 400,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    nextArrow: <Arrow arrowType="next" />,
+    prevArrow: <Arrow arrowType="prev" />,
+    arrows: images.length > 1,
+    adaptiveHeight: true,
   };
 
   return (
     <div className="card h-100 border-0 shadow-sm">
       <div className="position-relative">
-        <img
-          src={process.env.PUBLIC_URL + imageSrc}
-          alt={clothItem.brand}
-          className="card-img-top"
-          style={{ height: '300px', objectFit: 'cover' }}
-        />
+        {images.length > 1 ? (
+          <Slider {...sliderSettings} className="mini-carousel">
+            {images.map((img, idx) => (
+              <img
+                key={idx}
+                src={img}
+                alt={clothItem.brand}
+                className="card-img-top"
+                style={{ height: '300px', objectFit: 'cover', borderRadius: '8px' }}
+                onError={e => { e.target.src = 'https://via.placeholder.com/300x180?text=No+Image'; }}
+              />
+            ))}
+          </Slider>
+        ) : (
+          <img
+            src={images[0]}
+            alt={clothItem.brand}
+            className="card-img-top"
+            style={{ height: '300px', objectFit: 'cover', borderRadius: '8px' }}
+            onError={e => { e.target.src = 'https://via.placeholder.com/300x180?text=No+Image'; }}
+          />
+        )}
       </div>
       <div className="card-body">
         <h5 className="card-title fw-bold mb-3">{clothItem.brand || 'Maria B Clothing'}</h5>

@@ -9,6 +9,9 @@ import '../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js';
 import MyOrder from './screens/MyOrder';
 import About from './screens/About';
 import Checkout from './screens/Checkout';
+import SupportDashboard from './components/SupportDashboard';
+import AdminLogin from './screens/AdminLogin';
+import AdminDashboard from './screens/AdminDashboard';
 
 function App() {
   return (
@@ -22,6 +25,11 @@ function App() {
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/about" element={<About />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/support" element={<SupportDashboard />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>
       </div>
     </Router>
