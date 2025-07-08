@@ -14,6 +14,9 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/index.js"
+    },
+    {
+      "rootDirectory": "mymernapp"
     }
   ]
 }
