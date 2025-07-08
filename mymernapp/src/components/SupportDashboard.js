@@ -58,7 +58,7 @@ const SupportDashboard = () => {
 
     const fetchMessages = async (ticketId) => {
         try {
-            const response = await axios.get(`/api/support/tickets/${ticketId}`, {
+            const response = await axios.get(`/api/support/ticket?id=${ticketId}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
             });
             setMessages(response.data.messages || []);
@@ -93,20 +93,17 @@ const SupportDashboard = () => {
         if (!newMessage.trim() || !activeTicket) return;
 
         try {
-            const messageData = {
-                content: newMessage,
-                chatRoom: activeTicket._id
-            };
-
-            const response = await axios.post(`/api/support/tickets/${activeTicket._id}/messages`, messageData, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
-            });
+            const response = await axios.post(`/api/support/ticket?id=${activeTicket._id}`,
+                { content: newMessage },
+                { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
+            );
             setMessages(prev => {
                 if (prev.some(msg => msg._id === response.data._id)) return prev;
                 return [...prev, response.data];
             });
             socket.emit('send_message', {
-                ...messageData,
+                content: newMessage,
+                chatRoom: activeTicket._id,
                 sender: localStorage.getItem('userId'),
                 timestamp: new Date()
             });
