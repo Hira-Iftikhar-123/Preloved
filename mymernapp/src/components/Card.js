@@ -15,7 +15,7 @@ export default function Card({ clothItem, imageSrc }) {
   let data = useCart();
   const priceRef = useRef();
 
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
   let images = clothItem.images && clothItem.images.length > 0
     ? clothItem.images.map(img => img.startsWith('/uploads') ? backendUrl + img : backendUrl + '/uploads/dresses/' + img)
     : [imageSrc || 'https://via.placeholder.com/300x180?text=No+Image'];
