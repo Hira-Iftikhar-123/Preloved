@@ -36,7 +36,7 @@ const AdminDashboard = () => {
             return;
         }
         fetchDresses();
-    }, [navigate]);
+    }, [navigate, fetchDresses]);
 
     const fetchDresses = async () => {
         try {
