@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import DressForm from '../components/DressForm';
@@ -29,16 +29,7 @@ const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dresses');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const token = localStorage.getItem('adminToken');
-        if (!token) {
-            navigate('/admin/login');
-            return;
-        }
-        fetchDresses();
-    }, [navigate, fetchDresses]);
-
-    const fetchDresses = async () => {
+    const fetchDresses = useCallback(async () => {
         try {
             setIsLoading(true);
             const response = await axios.get('/api/admin/dresses', {
@@ -55,7 +46,16 @@ const AdminDashboard = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [navigate]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            navigate('/admin/login');
+            return;
+        }
+        fetchDresses();
+    }, [navigate, fetchDresses]);
 
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this dress?')) return;
