@@ -26,6 +26,10 @@ body {
   line-height: 1.6;
 }
 
+* {
+  print-color-adjust: exact !important;
+}
+
 /* Admin Dashboard Styles */
 .admin-dashboard {
   min-height: 100vh;
