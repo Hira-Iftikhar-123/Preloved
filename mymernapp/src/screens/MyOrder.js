@@ -134,8 +134,8 @@ export default function MyOrder() {
                                                     name: item.brand,
                                                     img: item.images && item.images.length > 0
                                                         ? (item.images[0].startsWith('/uploads')
-                                                            ? 'http://localhost:4000' + item.images[0]
-                                                            : 'http://localhost:4000/uploads/dresses/' + item.images[0])
+                                                                    ? item.images[0]
+        : item.images[0])
                                                         : undefined,
                                                     price: Math.min(...Object.values(item.sizes).map(Number)),
                                                     qty: 1,

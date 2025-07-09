@@ -3,7 +3,7 @@ import axios from 'axios';
 import { FaTicketAlt, FaComments, FaExclamationCircle, FaCheckCircle, FaClock, FaUser, FaPaperPlane, FaTimes } from 'react-icons/fa';
 import './SupportDashboard.css';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || '';
 axios.defaults.baseURL = API_BASE_URL;
 
 const AdminSupportDashboard = () => {

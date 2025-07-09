@@ -5,7 +5,7 @@ import { FaPaperPlane, FaTicketAlt, FaComments, FaExclamationCircle, FaCheckCirc
 import { useNavigate } from 'react-router-dom';
 import './SupportDashboard.css';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || '';
 axios.defaults.baseURL = API_BASE_URL;
 
 const SupportDashboard = () => {
@@ -30,7 +30,7 @@ const SupportDashboard = () => {
     };
 
     useEffect(() => {
-        const newSocket = io(process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000');
+        const newSocket = io(process.env.REACT_APP_BACKEND_URL || '');
         setSocket(newSocket);
 
         fetchTickets();
