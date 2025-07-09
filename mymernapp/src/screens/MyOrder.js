@@ -9,7 +9,7 @@ export default function MyOrder() {
     const [loading, setLoading] = useState(true);
 
     const fetchMyOrder = async () => {
-        await fetch('http://localhost:4000/api/myorderData', {
+        await fetch('/api/data?action=getOrders&userId=' + localStorage.getItem('userId'), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -25,7 +25,7 @@ export default function MyOrder() {
 
     const fetchRecommendations = async () => {
         try {
-            await fetch('http://localhost:4000/api/generateRecommendations', {
+            await fetch('/api/data?action=createRecommendation', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -35,7 +35,7 @@ export default function MyOrder() {
                 })
             });
 
-            const response = await fetch('http://localhost:4000/api/getRecommendations', {
+            const response = await fetch('/api/data?action=getRecommendations&userId=' + localStorage.getItem('userId'), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -19,7 +19,7 @@ export default function Home() {
 
   const loadData = async () => {
     try {
-      let response = await fetch('http://localhost:4000/api/ClothingData', {
+              let response = await fetch('/api/data?action=getDresses', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -36,7 +36,7 @@ export default function Checkout() {
         }
     
         try {
-            const response = await fetch('http://localhost:4000/api/orderData', {
+            const response = await fetch('/api/data?action=createOrder', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

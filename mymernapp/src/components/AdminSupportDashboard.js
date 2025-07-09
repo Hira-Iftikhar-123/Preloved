@@ -28,7 +28,7 @@ const AdminSupportDashboard = () => {
     const fetchTickets = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('/api/admin/support/tickets', {
+            const response = await axios.get('/api/support?action=getTickets&isAdmin=true', {
                 headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
             });
             console.log('Admin tickets response:', response.data);
@@ -49,12 +49,18 @@ const AdminSupportDashboard = () => {
         if (!newMessage.trim() || !activeTicket) return;
         try {
             console.log('Sending admin message for ticket:', activeTicket._id);
-            const response = await axios.post(`/api/admin/support/tickets/${activeTicket._id}/messages`, { content: newMessage }, {
+            const messageData = {
+                ticketId: activeTicket._id,
+                senderId: localStorage.getItem('adminId'),
+                message: newMessage,
+                senderType: 'admin'
+            };
+            const response = await axios.post('/api/support?action=sendMessage', messageData, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
             });
             console.log('Admin message response:', response.data);
-            setActiveTicket(response.data);
-            setTickets(tickets.map(t => t._id === response.data._id ? response.data : t));
+            // Refresh tickets to get updated data
+            await fetchTickets();
             setNewMessage('');
         } catch (error) {
             console.error('Error sending message:', error);

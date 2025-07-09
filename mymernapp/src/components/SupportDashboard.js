@@ -45,7 +45,7 @@ const SupportDashboard = () => {
     const fetchTickets = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('/api/support/tickets', {
+            const response = await axios.get('/api/support?action=getTickets&userId=' + localStorage.getItem('userId'), {
                 headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
             });
             setTickets(response.data);
@@ -58,10 +58,10 @@ const SupportDashboard = () => {
 
     const fetchMessages = async (ticketId) => {
         try {
-            const response = await axios.get(`/api/support/ticket?id=${ticketId}`, {
+            const response = await axios.get(`/api/support?action=getMessages&ticketId=${ticketId}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
             });
-            setMessages(response.data.messages || []);
+            setMessages(response.data || []);
         } catch (error) {
             setMessages([]);
         }
@@ -70,10 +70,15 @@ const SupportDashboard = () => {
     const handleCreateTicket = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/support/tickets', newTicket, {
+            const ticketData = {
+                ...newTicket,
+                userId: localStorage.getItem('userId')
+            };
+            const response = await axios.post('/api/support?action=createTicket', ticketData, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
             });
-            setTickets([...tickets, response.data]);
+            // Fetch updated tickets list
+            await fetchTickets();
             setNewTicket({
                 subject: '',
                 description: '',
@@ -81,7 +86,6 @@ const SupportDashboard = () => {
                 priority: 'medium'
             });
             setIsCreatingTicket(false);
-            setActiveTicket(response.data);
         } catch (error) {
             console.error('Error creating ticket:', error);
             alert('Failed to create ticket. Please try again.');
@@ -93,13 +97,24 @@ const SupportDashboard = () => {
         if (!newMessage.trim() || !activeTicket) return;
 
         try {
-            const response = await axios.post(`/api/support/ticket?id=${activeTicket._id}`,
-                { content: newMessage },
-                { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
-            );
+            const messageData = {
+                ticketId: activeTicket._id,
+                senderId: localStorage.getItem('userId'),
+                message: newMessage,
+                senderType: 'user'
+            };
+            const response = await axios.post('/api/support?action=sendMessage', messageData, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
+            });
             setMessages(prev => {
-                if (prev.some(msg => msg._id === response.data._id)) return prev;
-                return [...prev, response.data];
+                if (prev.some(msg => msg._id === response.data.messageId)) return prev;
+                return [...prev, {
+                    _id: response.data.messageId,
+                    message: newMessage,
+                    senderId: localStorage.getItem('userId'),
+                    senderType: 'user',
+                    timestamp: new Date()
+                }];
             });
             socket.emit('send_message', {
                 content: newMessage,

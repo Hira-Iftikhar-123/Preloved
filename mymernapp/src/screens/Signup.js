@@ -21,7 +21,7 @@ export default function Signup() {
             alert("Password should be at least 8 characters long.");
             return; 
         }
-        const response = await fetch("http://localhost:4000/api/createuser", {
+        const response = await fetch("/api/CreateUser", {
             method: 'POST',
             headers: {  
                 'Content-Type': "application/json"
