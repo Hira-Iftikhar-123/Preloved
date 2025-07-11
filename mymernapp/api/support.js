@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
   try {
     await client.connect();
-    const db = client.db('preloved');
+    const db = client.db('Preloved');
 
     const { action } = req.query;
 
